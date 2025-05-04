@@ -7,6 +7,27 @@ $menus = [
         'roles' => ['admin'],
     ],
     [
+        'group' => 'Product Management',
+    ],
+    [
+        'name' => 'Products',
+        'url' => route('admin.products.index'),
+        'icon' => 'inventory_2',
+        'roles' => ['admin'],
+    ],
+    [
+        'name' => 'Categories',
+        'url' => route('admin.categories.index'),
+        'icon' => 'category',
+        'roles' => ['admin'],
+    ],
+    // [
+    //     'name' => 'Users',
+    //     'url' => route('admin.users.index'),
+    //     'icon' => 'table',
+    //     'roles' => ['admin'],
+    // ],
+    [
         'group' => 'Account pages',
     ],
     [
