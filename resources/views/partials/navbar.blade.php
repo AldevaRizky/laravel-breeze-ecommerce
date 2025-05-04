@@ -1,10 +1,21 @@
+@php
+    $routeMap = [
+        'admin.dashboard' => 'Dashboard',
+        'admin.categories.index' => 'Categories',
+        'admin.products.index' => 'Products',
+    ];
+
+    $current = Route::currentRouteName();
+    $breadcrumbTitle = $routeMap[$current] ?? 'Dashboard';
+@endphp
+
 <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
     <div class="container-fluid py-1 px-3">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
           <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-          <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
+          <li class="breadcrumb-item text-sm text-dark active" aria-current="page">{{ $breadcrumbTitle }}</li>
         </ol>
       </nav>
     </div>
-  </nav>
+</nav>
