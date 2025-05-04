@@ -15,13 +15,17 @@ class Product extends Model
         'name',
         'description',
         'price',
+        'discount',
         'stock',
         'category_id',
         'images',
+        'metadata',
     ];
 
     protected $casts = [
-        'images' => 'array', // Mengubah kolom images menjadi array JSON
+        'images' => 'array',      // Mengubah kolom images menjadi array JSON
+        'metadata' => 'array',    // Mengubah kolom metadata menjadi array
+        'discount' => 'float',    // Diskon sebagai persentase (float)
     ];
 
     /**
