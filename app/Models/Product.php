@@ -9,19 +9,26 @@ class Product extends Model
 {
     use HasFactory;
 
-    public function seller()
-    {
-        return $this->belongsTo(User::class, 'seller_id');
-    }
+    protected $table = 'products';
 
+    protected $fillable = [
+        'name',
+        'description',
+        'price',
+        'stock',
+        'category_id',
+        'images',
+    ];
+
+    protected $casts = [
+        'images' => 'array', // Mengubah kolom images menjadi array JSON
+    ];
+
+    /**
+     * Relasi ke kategori
+     */
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
-
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
 }
-
