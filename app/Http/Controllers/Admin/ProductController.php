@@ -29,10 +29,15 @@ class ProductController extends Controller
             'name'        => 'required|string|max:255',
             'description' => 'nullable|string',
             'price'       => 'required|numeric',
+            'discount'    => 'nullable|numeric|min:0|max:100',
             'stock'       => 'required|integer',
             'category_id' => 'required|exists:categories,id',
             'images.*'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'metadata'    => 'nullable|array',
+            'metadata.*'  => 'string|in:highlight,You Might Like,Hot Deals,Featured Products,Best Seller,Limited Edition,New Arrival,Flash Sale,Trending Now,Bundle Offers,Exclusive,Eco-Friendly,Customizable,Pre-Order',
         ]);
+
+        $validated['metadata'] = $validated['metadata'] ?? [];
 
         $imagePaths = [];
         if ($request->hasFile('images')) {
@@ -57,50 +62,44 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        // Validasi input
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
+            'discount' => 'nullable|numeric|min:0|max:100',
             'stock' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'metadata' => 'nullable|array',
+            'metadata.*' => 'string|in:highlight,You Might Like,Hot Deals,Featured Products,Best Seller,Limited Edition,New Arrival,Flash Sale,Trending Now,Bundle Offers,Exclusive,Eco-Friendly,Customizable,Pre-Order',
         ]);
 
-        // Ambil gambar lama yang ingin dipertahankan
         $existingImages = $request->input('existing_images', []);
+        $imagesToDelete = array_diff($product->images ?? [], $existingImages);
 
-        // Hapus gambar lama yang tidak dipertahankan
-        if ($product->images && is_array($product->images)) {
-            $imagesToDelete = array_diff($product->images, $existingImages);
-
-            foreach ($imagesToDelete as $img) {
-                Storage::disk('public')->delete($img);
-            }
+        foreach ($imagesToDelete as $img) {
+            Storage::disk('public')->delete($img);
         }
 
-        // Upload gambar baru (jika ada)
         $newImages = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
-                if ($file->isValid()) {
-                    $path = $file->store('products', 'public');
-                    $newImages[] = $path;
-                }
+                $path = $file->store('products', 'public');
+                $newImages[] = $path;
             }
         }
 
-        // Gabungkan gambar yang dipertahankan + yang baru diupload
         $finalImages = array_merge($existingImages, $newImages);
 
-        // Update data produk
         $product->update([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'discount' => $request->discount,
             'stock' => $request->stock,
             'category_id' => $request->category_id,
             'images' => $finalImages,
+            'metadata' => $request->input('metadata', []),
         ]);
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
