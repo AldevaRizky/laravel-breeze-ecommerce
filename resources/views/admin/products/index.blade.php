@@ -108,6 +108,17 @@
         </div>
     </div>
 </div>
+@if($errors->any())
+    <script>
+        $(document).ready(function() {
+            @if(request()->is('admin/products/*'))
+                $('#editModal{{ $product->id ?? '' }}').modal('show');
+            @else
+                $('#addModal').modal('show');
+            @endif
+        });
+    </script>
+@endif
 @endsection
 
 @push('scripts')
@@ -170,23 +181,63 @@
     }
 </script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Notifikasi Session -->
 <script>
-    function deleteConfirmation(event) {
-        event.preventDefault();
+    // Notifikasi Success
+    @if(session('success'))
         Swal.fire({
-            title: 'Hapus produk?',
-            text: "Tindakan ini tidak dapat dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#2d4271',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                event.target.submit();
-            }
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#2d4271'
         });
-    }
+    @endif
+
+    // Notifikasi Error
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '{{ session('error') }}',
+            confirmButtonColor: '#2d4271'
+        });
+    @endif
+
+    // Notifikasi Validasi Error
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Terjadi Kesalahan!',
+            html: `@foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach`,
+            confirmButtonColor: '#2d4271'
+        });
+    @endif
+</script>
+<script>
+function deleteConfirmation(event) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Hapus produk?',
+        text: "Tindakan ini tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2d4271',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            event.target.submit();
+            Swal.fire({
+                title: 'Menghapus...',
+                text: 'Sedang memproses penghapusan',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+        }
+    });
+}
 </script>
 @endpush
