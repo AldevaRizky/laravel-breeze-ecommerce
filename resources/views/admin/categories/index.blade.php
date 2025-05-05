@@ -31,7 +31,10 @@
                         @foreach($categories as $category)
                         <tr>
                             <td><p class="text-sm font-weight-bold mb-0">{{ $category->name }}</p></td>
-                            <td><p class="text-sm mb-0">{{ $category->description }}</p></td>
+                            <td>    <p class="text-sm mb-0" title="{{ $category->description }}">
+                                {{ \Illuminate\Support\Str::limit($category->description, 50, '...') }}
+                            </p>
+                            </td>
                             <td>
                                 <button type="button" class="btn btn-sm bg-gradient-dark text-white" data-bs-toggle="modal" data-bs-target="#editModal{{ $category->id }}">
                                     Edit
@@ -121,53 +124,60 @@
 </style>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // Success Notification
+    // Notifikasi Success
     @if(session('success'))
         Swal.fire({
             icon: 'success',
             title: 'Berhasil!',
             text: '{{ session('success') }}',
-            showConfirmButton: false,
-            timer: 3000,
-            customClass: {
-                popup: 'animated tada'
-            }
+            confirmButtonColor: '#2d4271'
         });
     @endif
 
-    // Error Notification
+    // Notifikasi Error
     @if(session('error'))
         Swal.fire({
             icon: 'error',
             title: 'Gagal!',
             text: '{{ session('error') }}',
-            confirmButtonColor: '#2d4271',
-            customClass: {
-                popup: 'animated shake'
-            }
+            confirmButtonColor: '#2d4271'
         });
     @endif
 
-    // Delete Confirmation
-    function deleteConfirmation(event) {
-        event.preventDefault();
+    // Notifikasi Validasi Error
+    @if($errors->any())
         Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#2d4271',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal',
-            customClass: {
-                popup: 'animated heartBeat'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                event.target.submit();
-            }
+            icon: 'error',
+            title: 'Terjadi Kesalahan!',
+            html: `@foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach`,
+            confirmButtonColor: '#2d4271'
         });
-    }
+    @endif
+    
+    function deleteConfirmation(event) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Hapus produk?',
+        text: "Tindakan ini tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2d4271',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            event.target.submit();
+            Swal.fire({
+                title: 'Menghapus...',
+                text: 'Sedang memproses penghapusan',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+        }
+    });
+}
 </script>
 @endpush
