@@ -9,11 +9,16 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
         <label class="form-label">Harga</label>
         <input type="number" name="price" class="form-control" required value="{{ old('price', $product->price ?? '') }}">
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
+        <label class="form-label">Diskon (%)</label>
+        <input type="number" name="discount" class="form-control" min="0" max="100" step="0.01" 
+               value="{{ old('discount', $product->discount ?? '') }}">
+    </div>
+    <div class="col-md-4 mb-3">
         <label class="form-label">Stok</label>
         <input type="number" name="stock" class="form-control" required value="{{ old('stock', $product->stock ?? '') }}">
     </div>
@@ -29,6 +34,33 @@
         </option>
         @endforeach
     </select>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Metadata</label>
+    <div class="row">
+        @php
+            $metadataOptions = [
+                'highlight', 'You Might Like', 'Hot Deals', 'Featured Products',
+                'Best Seller', 'Limited Edition', 'New Arrival', 'Flash Sale',
+                'Trending Now', 'Bundle Offers', 'Exclusive', 'Eco-Friendly',
+                'Customizable', 'Pre-Order'
+            ];
+            $selectedMetadata = old('metadata', $product->metadata ?? []);
+        @endphp
+        @foreach($metadataOptions as $option)
+            <div class="col-md-3 mb-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="metadata[]" 
+                           value="{{ $option }}" id="meta_{{ \Str::slug($option) }}" 
+                           @if(in_array($option, $selectedMetadata)) checked @endif>
+                    <label class="form-check-label" for="meta_{{ \Str::slug($option) }}">
+                        {{ $option }}
+                    </label>
+                </div>
+            </div>
+        @endforeach
+    </div>
 </div>
 
 <div class="mb-3">
