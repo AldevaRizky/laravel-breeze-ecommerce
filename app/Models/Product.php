@@ -19,7 +19,7 @@ class Product extends Model
         'stock',
         'category_id',
         'images',
-        'metadata',
+        'metadata', //highlight,You Might Like,Hot Deals,Featured Products,Best Seller,Limited Edition,New Arrival,Flash Sale,Trending Now,Bundle Offers,Exclusive,Eco-Friendly,Customizable,Pre-Order
     ];
 
     protected $casts = [
