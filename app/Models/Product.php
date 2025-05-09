@@ -18,7 +18,7 @@ class Product extends Model
         'discount',
         'stock',
         'category_id',
-        'images',
+        'images', //storage/products/...(arr1, arr2, arr3) LEBIH DARI 1 FOTO
         'metadata', //highlight,You Might Like,Hot Deals,Featured Products,Best Seller,Limited Edition,New Arrival,Flash Sale,Trending Now,Bundle Offers,Exclusive,Eco-Friendly,Customizable,Pre-Order
     ];
 
