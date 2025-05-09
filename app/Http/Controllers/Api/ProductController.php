@@ -17,9 +17,10 @@ class ProductController extends Controller
                 ->get()
                 ->map(function ($product) {
                     return [
+                        'id' => $product->id,
                         'name' => $product->name,
-                        'images' => is_string($product->images) ? json_decode($product->images, true) : $product->images,
-                        'metadata' => is_string($product->metadata) ? json_decode($product->metadata, true) : $product->metadata,
+                        'image' => $product->images[0] ?? null,
+                        'metadata' => $product->metadata,
                         'created_at' => $product->created_at
                     ];
                 });
@@ -33,4 +34,60 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+    public function show($id): JsonResponse
+    {
+        try {
+            // Eager load category
+            $product = Product::with('category')->findOrFail($id);
+
+            return response()->json([
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'discount' => $product->discount,
+                'stock' => $product->stock,
+                'category' => $product->category ? $product->category->name : null,
+                'images' => $product->images,
+                'metadata' => $product->metadata,
+                'created_at' => $product->created_at,
+                'updated_at' => $product->updated_at,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Product not found',
+                'message' => $e->getMessage()
+            ], 404);
+        }
+    }
+
+    public function getRecommendedProducts(): JsonResponse
+    {
+        try {
+            $recommended = Product::whereJsonContains('metadata', 'You Might Like')
+                ->orderBy('created_at', 'desc')
+                ->take(4)
+                ->get()
+                ->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'discount' => $product->discount,
+                        'image' => $product->images[0] ?? null,
+                    ];
+                });
+
+            return response()->json($recommended);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Server Error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 }
