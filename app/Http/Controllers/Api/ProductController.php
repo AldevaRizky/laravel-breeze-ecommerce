@@ -111,4 +111,29 @@ class ProductController extends Controller
         }
     }
 
+    public function getHighDiscountProducts(): JsonResponse
+    {
+        try {
+            $products = Product::where('discount', '>', 40)
+                ->orderBy('discount', 'desc')
+                ->get()
+                ->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'discount' => $product->discount,
+                        'image' => $product->images[0] ?? null,
+                    ];
+                });
+
+            return response()->json($products);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Server Error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
