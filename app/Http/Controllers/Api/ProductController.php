@@ -88,6 +88,27 @@ class ProductController extends Controller
             ], 500);
         }
     }
+    public function getAllRecommendedProducts(): JsonResponse
+    {
+        try {
+            $products = Product::whereJsonContains('metadata', 'You Might Like')
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'image' => $product->images[0] ?? null,
+                    ];
+                });
 
+            return response()->json($products);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Server Error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 }

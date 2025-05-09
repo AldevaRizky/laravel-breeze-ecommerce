@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/new-arrivals', [App\Http\Controllers\Api\ProductController::class, 'getNewArrivals']);
 Route::get('/products/{id}', [App\Http\Controllers\Api\ProductController::class, 'show']);
 Route::get('/recommended-products', [App\Http\Controllers\Api\ProductController::class, 'getRecommendedProducts']);
+Route::get('/recommended-products/all', [App\Http\Controllers\Api\ProductController::class, 'getAllRecommendedProducts']);
 
