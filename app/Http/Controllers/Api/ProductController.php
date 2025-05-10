@@ -185,4 +185,31 @@ class ProductController extends Controller
         }
     }
 
+    public function getAllProducts(): JsonResponse
+    {
+        try {
+            $products = Product::with('category')
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'description' => $product->description,
+                        'category' => $product->category ? $product->category->name : null,
+                        'price' => $product->price,
+                        'discount' => $product->discount,
+                        'image' => $product->images[0] ?? null,
+                    ];
+                });
+
+            return response()->json($products);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Server Error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
