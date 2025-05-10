@@ -23,4 +23,5 @@ Route::get('/products/{id}', [App\Http\Controllers\Api\ProductController::class,
 Route::get('/recommended-products', [App\Http\Controllers\Api\ProductController::class, 'getRecommendedProducts']);
 Route::get('/recommended-products/all', [App\Http\Controllers\Api\ProductController::class, 'getAllRecommendedProducts']);
 Route::get('/high-discount-products', [App\Http\Controllers\Api\ProductController::class, 'getHighDiscountProducts']);
+Route::get('/best-seller-products', [App\Http\Controllers\Api\ProductController::class, 'getBestSellerProducts']);
 

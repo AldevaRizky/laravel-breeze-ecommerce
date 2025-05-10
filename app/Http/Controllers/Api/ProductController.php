@@ -136,4 +136,29 @@ class ProductController extends Controller
         }
     }
 
+    public function getBestSellerProducts(): JsonResponse
+    {
+        try {
+            $products = Product::whereJsonContains('metadata', 'Best Seller')
+                ->orderBy('created_at', 'desc')
+                ->take(2)
+                ->get()
+                ->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'image' => $product->images[0] ?? null,
+                    ];
+                });
+
+            return response()->json($products);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Server Error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
