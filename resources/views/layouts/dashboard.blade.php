@@ -274,6 +274,32 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   {{-- Optional Scripts (pushable from child views) --}}
   @stack('scripts')
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          Swal.fire({
+            title: 'Yakin ingin logout?',
+            text: "Sesi kamu akan dihentikan.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, logout!',
+            cancelButtonText: 'Batal'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              document.getElementById('logout-form').submit();
+            }
+          });
+        });
+      }
+    });
+  </script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 
 </html>
