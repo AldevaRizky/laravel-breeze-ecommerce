@@ -82,6 +82,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-end mt-3 mx-3">
+                    {{ $products->onEachSide(1)->links('pagination::bootstrap-5') }}
+                </div>
             </div>
         </div>
     </div>
