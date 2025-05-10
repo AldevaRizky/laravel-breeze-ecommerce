@@ -161,4 +161,28 @@ class ProductController extends Controller
         }
     }
 
+    public function getFeaturedProducts(): JsonResponse
+    {
+        try {
+            $products = Product::whereJsonContains('metadata', 'Featured Products')
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($product) {
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'price' => $product->price,
+                        'image' => $product->images[0] ?? null,
+                    ];
+                });
+
+            return response()->json($products);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Server Error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
